@@ -14,81 +14,84 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/owner')
-def owner():
-    return render_template('owner.html')
-
-@app.route('/farmer')
-def farmer():
-    return render_template('farmer.html')
+@app.route('/login')
+def login():
+    return render_template('register.html')
 
 @app.route('/submit', methods = ["POST"])
 def form():
     name = request.form.get('name')
-    mobile = request.form.get('mobile')
     email = request.form.get('email')
-    password = str(request.form.get('password'))
+    password = str(request.form.get('pass'))
     cur.execute("use login_info")
-    query = " INSERT INTO credentials values(%s, %s, %s, %s)"
-    val = [(name, mobile, email, password )]
+    query = " INSERT INTO credentials values(%s, %s, %s)"
+    val = [(name, email, password )]
     cur.executemany(query, val)
     conn.commit()
     return render_template("signin.html")
 
-
-@app.route('/submit1', methods = ["POST"])
-def form1():
-    name = request.form.get('name')
-    mobile = request.form.get('mobile')
-    email = request.form.get('email')
-    password = str(request.form.get('password'))
-    cur.execute("use login_info")
-    query = " INSERT INTO credentials1 values(%s, %s, %s, %s)"
-    val = [(name, mobile, email, password )]
-    cur.executemany(query, val)
-    conn.commit()
-    return render_template("signin2.html")
-
-
-@app.route('/owner' , methods = ["POST"])
+@app.route('/sign_in' , methods = ["POST"])
 def sign_in():
     email = request.form.get('email')
-    password = str(request.form.get('password'))
-    cur.execute("""SELECT * FROM `credentials` WHERE `email` LIKE 'email' AND `password` LIKE 'password' """.format(email,password))
+    password = str(request.form.get('pass'))
+
+    cur.execute("""SELECT * FROM `credentials` WHERE `email` LIKE '{}' AND `password` LIKE '{}' """.format(email,password))
     cred=cur.fetchall()
-    return redirect("owner")
+    return redirect('/')
 
-@app.route('/farmer' , methods = ["POST"])
-def sign_in1():
-    email = request.form.get('email')
-    password = str(request.form.get('password'))
-    cur.execute("""SELECT * FROM `credentials1` WHERE `email` LIKE 'email' AND `password` LIKE 'password' """.format(email,password))
-    cred=cur.fetchall()
-    return redirect("farmer")
-
-
-
-@app.route('/signin')
+@app.route('/member')
 def member():
     return render_template('signin.html')
-
-@app.route('/signin2')
-def member2():
-    return render_template('signin2.html')
 
 @app.route('/register')
 def resitration():
     return render_template('register.html')
 
-@app.route('/register2')
-def resitration2():
-    return render_template('register2.html')
+@app.route('/land_holder')
+def holder():
+    return render_template('land_holder.html')
 
+@app.route('/rental_person')
+def rental():
+    return render_template('rental_person.html')
 
+@app.route('/services')
+def services():
+    return render_template('services.html')
 
 if __name__ == ('__main__'):
     app.run(debug=True)
 
 
 
+# from flask import Flask, render_template, request
 
+# app = Flask(__name__)
+
+# @app.route('/')
+# def index():
+#   return render_template('index.html')
+
+@app.route('/add', methods=['POST'])
+def add():
+  land = request.form['land']
+  price = request.form['price']
+  # add land and price to database
+  return 'Land and price added successfully'
+
+@app.route('/rent', methods=['POST'])
+def rent():
+  land = request.form['land']
+  duration = request.form['duration']
+  # rent a person for farming for the specified duration
+  return 'Person rented for farming successfully'
+
+@app.route('/service', methods=['POST'])
+def service():
+  service = request.form['service']
+  land = request.form['land']
+  # provide the requested service for the specified land
+  return 'Service provided successfully'
+
+# if __name__ == '__main__':
+#   app.run()
